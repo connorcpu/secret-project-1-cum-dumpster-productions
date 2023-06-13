@@ -24,11 +24,15 @@ vakjes = [[160, 683], [286, 683], [356, 683], [415, 683], [482, 683],
 
 #parse command line arguments
 debug = False
-for arg in enumerate(sys.argv):
+i = 0
+
+while i < len(sys.argv):
+  arg = sys.argv[i]
   print(arg)
   if arg == "--debug":
     debug = True
     print(debug)
+  i += 1
 
 #const for dice possions
 dicePos = [285, 270]
@@ -64,9 +68,26 @@ def devilTurn():
 
   #python is garbage
   global worp
+  global health
+  global beurt
 
   #choose random number, avarage should be higher than normal dice, combined with a penalty it creates 'exciting' gameplay
   worp = random.randint(-16, 20)
+
+  #player health should go down when they use a devils turn
+  health[beurt] = health[beurt] - 10
+  
+  #because the game is ending we dont need propper turns anymore se we can reuse 'beurt'
+  if health[beurt] <= 0:
+    if beurt == 0:
+      beurt = 1
+    elif beurt == 1:
+      beurt = 0
+
+    print(f"player {beurt} heeft gewonnen")
+    pygame.quit()
+    sys.exit()
+
 
   doBeurt()
 
@@ -86,7 +107,7 @@ def doBeurt():
     print(f"speler {beurt + 1} ({players[beurt]}) op plek {posities[beurt]} heeft {worp} gegooit en zou naar gaan {posities[beurt] + worp}")
 
   #if the dice is negative the predicted posision can be below 0, this must set the pos to 0
-  if beurt < 0 and posities[beurt] + beurt < 0:
+  if worp < 0 and posities[beurt] + worp < 0:
     posities[beurt] = 0
   
   #check if the playeu has reached the end, overshot the end or should just go forward
@@ -130,8 +151,12 @@ DISPLAYSURF = pygame.display.set_mode((1050, 754))
 pygame.display.set_caption('Hello World!')
 clock = pygame.time.Clock()
 
-player1Name = input("please enter player 1's name: ")
-player2Name = input("please enter player 2's name: ")
+if debug == False:
+  player1Name = input("please enter player 1's name: ")
+  player2Name = input("please enter player 2's name: ")
+elif debug == True:
+  player1Name = "Connor"
+  player2Name = "Merijn"
 players = [player1Name, player2Name]
 
 #game loop
@@ -154,16 +179,22 @@ while True:
   font = pygame.font.SysFont(None, 25) 
   
   #get coords of tile to draw the player
-  p1X = vakjes[posities[0]][0]
-  p1Y = vakjes[posities[0]][1]
+  p1X = vakjes[posities[0]][0] - 5
+  p1Y = vakjes[posities[0]][1] - 5
   p1C = (255, 20, 147)
+  p1H = health[0]
   pygame.draw.circle(DISPLAYSURF, p1C, (p1X, p1Y), 10)
+  pygame.draw.rect(DISPLAYSURF, p1C, (p1X - 20, p1Y - 30, 40, 10), 2)
+  pygame.draw.rect(DISPLAYSURF, (255, 0, 0), (p1X - 18, p1Y - 28, int((p1H / 100) * 36), 6), 0)
   DISPLAYSURF.blit(font.render(f"{players[0]}", 1, p1C), (p1X - 20, p1Y + 20)) 
 
-  p2X = vakjes[posities[1]][0] + 3
-  p2Y= vakjes[posities[1]][1] + 3
+  p2X = vakjes[posities[1]][0] + 5
+  p2Y= vakjes[posities[1]][1] + 5
   p2C = (147, 20, 255)
+  p2H = health[1]
   pygame.draw.circle(DISPLAYSURF, p2C, (p2X, p2Y), 10)
+  pygame.draw.rect(DISPLAYSURF, p2C, (p2X - 20, p2Y - 30, 40, 10), 2)
+  pygame.draw.rect(DISPLAYSURF, (255, 0, 0), (p2X - 18, p2Y - 28, int((p2H / 100) * 36), 6), 0)
   DISPLAYSURF.blit(font.render(f"{players[1]}", 1, p2C), (p2X - 20, p2Y + 20)) 
 
   #render text on screen what was trown for the player
@@ -184,8 +215,8 @@ while True:
   
   #get mouse pos to see if its on the dice
   mx, my = pygame.mouse.get_pos()
-  if debug:
-    print(f"mx: {mx} my: {my}")
+  #if debug:
+  #  print(f"mx: {mx} my: {my}")
   
   if (mx > dicePos[0] and mx < dicePos[0] + dice.get_width()) and (my > dicePos[1] and my < dicePos[1] + dice.get_height()):
     hoveringDice = True
@@ -204,9 +235,9 @@ while True:
     #try find a mous event
     if event.type == pygame.MOUSEBUTTONDOWN:
       if hoveringDice:
-        doBeurt()
+        normal()
       elif hoveringDevilsDice:
-        doBeurt()
+        devilTurn()
     #try find a keydown event
     if event.type == pygame.KEYDOWN:
 
@@ -217,7 +248,7 @@ while True:
         if debug:
           print("spatie")
 
-        doBeurt()
+        normal()
         
       #handle game reset by checking for backspace and then resetting both positions to 0 and giving the turn to player 1
       elif event.key == pygame.K_BACKSPACE:
