@@ -53,6 +53,9 @@ beurt = 0
 #declare here to upgrade scope so it can be renderd to the screen
 worp = 0
 
+#declare where banna peels are
+peels = []
+
 #function for normal dice or space
 def normal():
 
@@ -120,7 +123,8 @@ def doBeurt():
   elif posities[beurt] + worp == 63:
 
     print(f"player {beurt + 1} heeft gewonnen")
-    pygame.event.post(pygame.event.Event(pygame.QUIT))
+    pygame.quit()
+    sys.exit()
 
   #EXTRA FETURE: waneer je meer gooit dan nodig ga je acheruit, dus je moet exact gooien wat je nodig hebt
   #player has overshot the end
@@ -128,10 +132,50 @@ def doBeurt():
 
     posities[beurt] = 63 - (worp - (63 - posities[beurt]))
 
+  skip = False
+  #mysteryboxes
+  for pos in [3, 19, 24, 37, 43, 55]:
+    if posities[beurt] == pos:
+      if debug:
+        print("pickup mysteryboxe")
+
+      #0 is banna peel, 1 is skip turn, 2 is oponent moves backwards
+      roll = random.randint(0, 2)
+      #roll = 2
+
+      if debug:
+        print(f"roll: {roll}")
+      
+      placedPeel = False
+
+      if roll == 0:
+        peels.append(posities[beurt])
+        placedPeel = True
+      elif roll == 1:
+        skip = True
+        if debug:
+          print("making oponent skip turn")
+      elif roll == 2:
+        if beurt == 0:
+          oponent = 1
+        else:
+          oponent = 0
+        print(f"player {oponent} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
+        posities[oponent] = posities[oponent] - 5
+        if posities[oponent] < 0:
+          posities[oponent] = 0
+      
+      for pos in peels:
+        if posities[beurt] == pos and not placedPeel:
+          posities[beurt] = posities[beurt] - 8
+
   #lil debug
   if debug:
     print(beurt)
     print(posities[beurt])
+
+  if skip:
+    return
 
   #the place to put future code (put the code above this live so it stays accurate)
 
@@ -169,11 +213,15 @@ while True:
   bord = pygame.image.load("bord.png")
   dice = pygame.image.load("dice.png")
   devilsDice = pygame.image.load("devils dice.png")
+  peel = pygame.image.load("placeholder50x50.png")
       
   #render images
   DISPLAYSURF.blit(bord, bord.get_rect())
   DISPLAYSURF.blit(dice, (dicePos[0], dicePos[1]))
   DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
+
+  for pos in peels:
+    DISPLAYSURF.blit(peel, vakjes[pos])
 
   #set a font to use, size 25
   font = pygame.font.SysFont(None, 25) 

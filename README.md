@@ -22,3 +22,10 @@ ding word toegevoegd aan de onderstaande lijst van toegevoegde functionaliteit.
     * negatief rollen kan er voor zorgen dat de positie negatief is, dit word gecorrigeerd naar 0
   * voor elke keer gooien gaat er heath vanaf
   * het gemiddelde van de devils dice ligt iets hoger dan de normale dobbelsteen
+* mystery box systeem
+  * banana peel will be added to board the next player to land there will slip 8 squares backwards
+  * make the opponent skip next turn
+  * move opponent back 5 squares
+  * visual mystery boxes (planned)
+  * visual text to show what mystery box did (planned)
+  * visual banana peel (placeholder cat image)
