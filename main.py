@@ -56,12 +56,6 @@ worp = 0
 #declare where banna peels are
 peels = []
 
-#load images
-bord = pygame.image.load("bord.png")
-dice = pygame.image.load("dice.png")
-devilsDice = pygame.image.load("devils dice.png")
-peel = pygame.image.load("Banan.png")
-
 #function for normal dice or space
 def normal():
 
@@ -93,7 +87,8 @@ def devilTurn():
     elif beurt == 1:
       beurt = 0
 
-    print(f"player {beurt + 1} ({players[beurt]}) heeft gewonnen")
+    #inform the players who won and exit
+    print(f"player {beurt} heeft gewonnen")
     pygame.quit()
     sys.exit()
 
@@ -128,6 +123,7 @@ def doBeurt():
   #player has reached the end
   elif posities[beurt] + worp == 63:
 
+    #inform the players who won and exit
     print(f"player {beurt + 1} heeft gewonnen")
     pygame.quit()
     sys.exit()
@@ -139,9 +135,12 @@ def doBeurt():
     posities[beurt] = 63 - (worp - (63 - posities[beurt]))
 
   skip = False
-  #mysteryboxes
+
+  #mysteryboxes at posities 3, 19, 24, 37, 43, 55
   for pos in [3, 19, 24, 37, 43, 55]:
     if posities[beurt] == pos:
+
+      #lil debug
       if debug:
         print("pickup mysteryboxe")
 
@@ -149,29 +148,50 @@ def doBeurt():
       roll = random.randint(0, 2)
       #roll = 2
 
+      #lil debug
       if debug:
         print(f"roll: {roll}")
       
+      #setup variable to later make sure the player who placed the peel doesnt slip
       placedPeel = False
 
+      #elif to handle mysteryboxes
       if roll == 0:
+
+        #store where the peels are
         peels.append(posities[beurt])
+
+        #make sure the player that places the peel doesnt slip
         placedPeel = True
-        print("someone landed on the peel")
+
+      #handle making the opponent skip
       elif roll == 1:
+
         skip = True
+        
         if debug:
           print("making oponent skip turn")
+      
+      #handle oponent being moved back 5 spaces without moving the player to negative positions
       elif roll == 2:
+      
+        #find out who the opponent is
         if beurt == 0:
           oponent = 1
         else:
           oponent = 0
-        print(f"player {oponent + 1} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
+
+        #print info
+        print(f"player {oponent} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
+
+        #move the player
         posities[oponent] = posities[oponent] - 5
+
+        #handle negative spaces
         if posities[oponent] < 0:
           posities[oponent] = 0
       
+      #check if the player landed on a peel, consider the placedPeel variable to make sure the player doesnt slip on their own peel
       for pos in peels:
         if posities[beurt] == pos and not placedPeel:
           posities[beurt] = posities[beurt] - 8
@@ -181,6 +201,7 @@ def doBeurt():
     print(beurt)
     print(posities[beurt])
 
+  #if the opponent has to skip their turn retun just before handing over the turn
   if skip:
     return
 
@@ -202,12 +223,14 @@ DISPLAYSURF = pygame.display.set_mode((1050, 754))
 pygame.display.set_caption('Hello World!')
 clock = pygame.time.Clock()
 
+#auto fill names if debug is active, this makes debugging SO MUCH faster
 if debug == False:
   player1Name = input("please enter player 1's name: ")
   player2Name = input("please enter player 2's name: ")
 elif debug == True:
   player1Name = "Connor"
   player2Name = "Merijn"
+
 players = [player1Name, player2Name]
 
 #game loop
@@ -215,16 +238,21 @@ while True:
 
   #clear sceen from previous frame
   DISPLAYSURF.fill((255,255,255))
+
+  #load images
+  bord = pygame.image.load("bord.png")
+  dice = pygame.image.load("dice.png")
+  devilsDice = pygame.image.load("devils dice.png")
+  peel = pygame.image.load("placeholder50x50.png")
       
   #render images
   DISPLAYSURF.blit(bord, bord.get_rect())
   DISPLAYSURF.blit(dice, (dicePos[0], dicePos[1]))
   DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
 
+  #render banna peels
   for pos in peels:
-    peelX = vakjes[pos][0] - 25
-    peelY = vakjes[pos][1] - 25
-    DISPLAYSURF.blit(peel, (peelX, peelY))
+    DISPLAYSURF.blit(peel, vakjes[pos])
 
   #set a font to use, size 25
   font = pygame.font.SysFont(None, 25) 
@@ -269,16 +297,17 @@ while True:
   #if debug:
   #  print(f"mx: {mx} my: {my}")
   
+  #i could not be bothered to use some propper library so i just checked if the mouse is within the boundingbox of the dice
   if (mx > dicePos[0] and mx < dicePos[0] + dice.get_width()) and (my > dicePos[1] and my < dicePos[1] + dice.get_height()):
     hoveringDice = True
   else:
     hoveringDice = False
 
-  #check if mouse is over the devils dice
-  if (mx > devilsDicePos[0] and mx < devilsDicePos[0] + devilsDice.get_width()) and (my > devilsDicePos[1] and my < devilsDicePos[1] + devilsDice.get_height()):
-    hoveringDevilsDice = True
-  else:
-    hoveringDevilsDice = False
+    #check if mouse is over the devils dice, since the mouse cant be over both dices at the same time indenting this block optimizes a tiny bit
+    if (mx > devilsDicePos[0] and mx < devilsDicePos[0] + devilsDice.get_width()) and (my > devilsDicePos[1] and my < devilsDicePos[1] + devilsDice.get_height()):
+      hoveringDevilsDice = True
+    else:
+      hoveringDevilsDice = False
   
   #get all events
   for event in pygame.event.get():
@@ -286,9 +315,15 @@ while True:
     #try find a mous event
     if event.type == pygame.MOUSEBUTTONDOWN:
       if hoveringDice:
+
+        #if you hover over the dice and click trigger a normal turn
         normal()
+
       elif hoveringDevilsDice:
+
+        #if you hover the devilsDice and click it triggers a devilTurn
         devilTurn()
+
     #try find a keydown event
     if event.type == pygame.KEYDOWN:
 
@@ -299,6 +334,7 @@ while True:
         if debug:
           print("spatie")
 
+        #pressing space triggers a normal turn
         normal()
         
       #handle game reset by checking for backspace and then resetting both positions to 0 and giving the turn to player 1
@@ -315,7 +351,7 @@ while True:
           pygame.quit()
           sys.exit()
         
-  #something to do with the clock that makes pygame funcion as expected; leave here & ignore
+  #somothing to do with the clock that makes pygame funcion as exected; leave here & ignore
   clock.tick(60)
   
   #render prepared framebuffer to the screen      
