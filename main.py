@@ -56,6 +56,12 @@ worp = 0
 #declare where banna peels are
 peels = []
 
+#load images
+bord = pygame.image.load("bord.png")
+dice = pygame.image.load("dice.png")
+devilsDice = pygame.image.load("devils dice.png")
+peel = pygame.image.load("Banan.png")
+
 #function for normal dice or space
 def normal():
 
@@ -87,7 +93,7 @@ def devilTurn():
     elif beurt == 1:
       beurt = 0
 
-    print(f"player {beurt} heeft gewonnen")
+    print(f"player {beurt + 1} ({players[beurt]}) heeft gewonnen")
     pygame.quit()
     sys.exit()
 
@@ -151,6 +157,7 @@ def doBeurt():
       if roll == 0:
         peels.append(posities[beurt])
         placedPeel = True
+        print("someone landed on the peel")
       elif roll == 1:
         skip = True
         if debug:
@@ -160,7 +167,7 @@ def doBeurt():
           oponent = 1
         else:
           oponent = 0
-        print(f"player {oponent} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
+        print(f"player {oponent + 1} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
         posities[oponent] = posities[oponent] - 5
         if posities[oponent] < 0:
           posities[oponent] = 0
@@ -208,12 +215,6 @@ while True:
 
   #clear sceen from previous frame
   DISPLAYSURF.fill((255,255,255))
-
-  #load images
-  bord = pygame.image.load("bord.png")
-  dice = pygame.image.load("dice.png")
-  devilsDice = pygame.image.load("devils dice.png")
-  peel = pygame.image.load("placeholder50x50.png")
       
   #render images
   DISPLAYSURF.blit(bord, bord.get_rect())
@@ -221,7 +222,9 @@ while True:
   DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
 
   for pos in peels:
-    DISPLAYSURF.blit(peel, vakjes[pos])
+    peelX = vakjes[pos][0] - 25
+    peelY = vakjes[pos][1] - 25
+    DISPLAYSURF.blit(peel, (peelX, peelY))
 
   #set a font to use, size 25
   font = pygame.font.SysFont(None, 25) 
@@ -312,7 +315,7 @@ while True:
           pygame.quit()
           sys.exit()
         
-  #somothing to do with the clock that makes pygame funcion as exected; leave here & ignore
+  #something to do with the clock that makes pygame funcion as expected; leave here & ignore
   clock.tick(60)
   
   #render prepared framebuffer to the screen      
