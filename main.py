@@ -55,6 +55,11 @@ worp = 0
 
 #declare where banna peels are
 peels = []
+      
+#render images
+DISPLAYSURF.blit(bord, bord.get_rect())
+DISPLAYSURF.blit(dice, (dicePos[0], dicePos[1]))
+DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
 
 #function for normal dice or space
 def normal():
@@ -88,7 +93,7 @@ def devilTurn():
       beurt = 0
 
     #inform the players who won and exit
-    print(f"player {beurt} heeft gewonnen")
+    print(f"player {beurt + 1} ({players[beurt]}) heeft gewonnen")
     pygame.quit()
     sys.exit()
 
@@ -164,6 +169,9 @@ def doBeurt():
         #make sure the player that places the peel doesnt slip
         placedPeel = True
 
+        #player feedback
+        print("someone landed on the peel")
+
       #handle making the opponent skip
       elif roll == 1:
 
@@ -182,7 +190,7 @@ def doBeurt():
           oponent = 0
 
         #print info
-        print(f"player {oponent} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
+        print(f"player {oponent + 1} ({players[oponent]}) will has been moved back 5 spaces, from {posities[oponent]}, to {posities[oponent] - 5}")
 
         #move the player
         posities[oponent] = posities[oponent] - 5
@@ -244,15 +252,14 @@ while True:
   dice = pygame.image.load("dice.png")
   devilsDice = pygame.image.load("devils dice.png")
   peel = pygame.image.load("placeholder50x50.png")
-      
-  #render images
-  DISPLAYSURF.blit(bord, bord.get_rect())
-  DISPLAYSURF.blit(dice, (dicePos[0], dicePos[1]))
-  DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
 
   #render banna peels
   for pos in peels:
-    DISPLAYSURF.blit(peel, vakjes[pos])
+
+    #extract x and y, center the image then render
+    peelX = vakjes[pos][0] - 25
+    peelY = vakjes[pos][1] - 25
+    DISPLAYSURF.blit(peel, (peelX, peelY))
 
   #set a font to use, size 25
   font = pygame.font.SysFont(None, 25) 
