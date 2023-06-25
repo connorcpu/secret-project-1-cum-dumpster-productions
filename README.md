@@ -17,7 +17,7 @@ ding word toegevoegd aan de onderstaande lijst van toegevoegde functionaliteit.
   * health bar
   * health aftrek als je de devils dice gebruikt
 * visuele dobbelsteen waar je op kan drukken om te rollen
-* visuele ’devil dice’ (no exact specifications) (placeholder -16 until 20)
+* visuele ’devil dice’ 
   * voor meer risko maar de mogelijk heid om hoger te rollen, maar je kan ook negatief rollen
     * negatief rollen kan er voor zorgen dat de positie negatief is, dit word gecorrigeerd naar 0
   * voor elke keer gooien gaat er heath vanaf
@@ -26,6 +26,5 @@ ding word toegevoegd aan de onderstaande lijst van toegevoegde functionaliteit.
   * banana peel will be added to board the next player to land there will slip 8 squares backwards
   * make the opponent skip next turn
   * move opponent back 5 squares
-  * visual mystery boxes (planned)
-  * visual text to show what mystery box did (planned)
-  * visual banana peel (placeholder cat image)
+  * visual mystery boxes
+  * visual banana peel
