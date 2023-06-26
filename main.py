@@ -55,11 +55,11 @@ worp = 0
 
 #declare where banna peels are
 peels = []
-      
-#render images
-DISPLAYSURF.blit(bord, bord.get_rect())
-DISPLAYSURF.blit(dice, (dicePos[0], dicePos[1]))
-DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
+#load images
+bord = pygame.image.load("bord.png")
+dice = pygame.image.load("dice.png")
+devilsDice = pygame.image.load("devils dice.png")
+peel = pygame.image.load("placeholder50x50.png") 
 
 #function for normal dice or space
 def normal():
@@ -247,11 +247,10 @@ while True:
   #clear sceen from previous frame
   DISPLAYSURF.fill((255,255,255))
 
-  #load images
-  bord = pygame.image.load("bord.png")
-  dice = pygame.image.load("dice.png")
-  devilsDice = pygame.image.load("devils dice.png")
-  peel = pygame.image.load("placeholder50x50.png")
+  #render images
+  DISPLAYSURF.blit(bord, bord.get_rect())
+  DISPLAYSURF.blit(dice, (dicePos[0], dicePos[1]))
+  DISPLAYSURF.blit(devilsDice, (devilsDicePos[0], devilsDicePos[1]))
 
   #render banna peels
   for pos in peels:
