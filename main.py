@@ -56,10 +56,10 @@ worp = 0
 #declare where banna peels are
 peels = []
 #load images
-bord = pygame.image.load("bord.png")
-dice = pygame.image.load("dice.png")
-devilsDice = pygame.image.load("devils dice.png")
-peel = pygame.image.load("placeholder50x50.png") 
+bord = pygame.image.load("assets/bord.png")
+dice = pygame.image.load("assets/dice.png")
+devilsDice = pygame.image.load("assets/devils dice.png")
+peel = pygame.image.load("assets/placeholder50x50.png") 
 
 #function for normal dice or space
 def normal():
